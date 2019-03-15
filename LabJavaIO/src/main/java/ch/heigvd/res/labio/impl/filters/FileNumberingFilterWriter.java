@@ -25,7 +25,24 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    if(str.isEmpty()) return;
+    int i = 0;
+    int j;
+    int counter = 1;
+    String number;
+    while((j = str.indexOf('\n', i)) != -1){
+      number = Integer.toString(counter);
+      super.write(number, 0 ,number.length());
+      super.write('\t');
+      ++counter;
+      super.write(str, i, j - i + 1);
+      i = j + 1;
+    }
+    number = Integer.toString(counter);
+    super.write(number, 0, number.length());
+    super.write('\t');
+    super.write(str, i, str.length() - i);
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
   }
 
   @Override
