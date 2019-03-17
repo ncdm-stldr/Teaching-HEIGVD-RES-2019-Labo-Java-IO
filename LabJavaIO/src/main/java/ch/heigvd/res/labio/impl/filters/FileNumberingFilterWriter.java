@@ -27,7 +27,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    if(str.length() < off + len) throw new IOException("out of range access to char[] buffer");
+    if(str.length() < off + len) return;
     for(int i = off; i < off + len; ++i){
       write(str.charAt(i));
     }

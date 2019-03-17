@@ -157,9 +157,9 @@ public class Application implements IApplication {
          */
         String p = file.getPath() + '\n';
         try {
-          writer.write(p);
+          //writer.write(p);
           //the next line write the file path in unix style
-          //writer.write(p.replace('\\', '/'));
+          writer.write(p.replace('\\', '/'));
         } catch (IOException e) {
           e.printStackTrace();
         }
