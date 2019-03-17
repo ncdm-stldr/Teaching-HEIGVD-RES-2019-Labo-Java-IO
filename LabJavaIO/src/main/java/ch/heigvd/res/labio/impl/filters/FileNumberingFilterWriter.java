@@ -33,16 +33,9 @@ public class FileNumberingFilterWriter extends FilterWriter {
     }
   }
 
-  private void writeNumbering() throws IOException {
-    String number = Integer.toString(counter);
-    super.write(number, 0, number.length());
-    ++counter;
-    super.write('\t');
-  }
-
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    if(cbuf.length < off + len) throw new IOException("out of range access to char[] buffer");
+    if(cbuf.length < off + len) return;
     for(int i = off; i < off + len; ++i){
       write(cbuf[i]);
     }
@@ -73,6 +66,13 @@ public class FileNumberingFilterWriter extends FilterWriter {
       super.write(c);
     }
 
+  }
+
+  private void writeNumbering() throws IOException {
+    String number = Integer.toString(counter);
+    super.write(number, 0, number.length());
+    ++counter;
+    super.write('\t');
   }
 
 }
