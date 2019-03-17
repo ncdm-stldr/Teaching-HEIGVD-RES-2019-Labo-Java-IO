@@ -143,9 +143,6 @@ public class ApplicationTest {
     boolean applicationReturnsValidUnixFilePaths = (reference.equals(outputWithUnixSeparator));
     boolean applicationReturnsValidFilePaths = (applicationReturnsValidPlatformSpecificFilePaths || applicationReturnsValidUnixFilePaths);
 
-    System.out.println(output);
-    System.out.println(reference);
-
     assertTrue(applicationReturnsValidFilePaths);
 
   }
