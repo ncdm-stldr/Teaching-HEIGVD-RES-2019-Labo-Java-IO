@@ -1,9 +1,8 @@
 package ch.heigvd.res.labio.impl.filters;
 
-import java.io.FilterWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * This class transforms the streams of character sent to the decorated writer.
@@ -17,6 +16,9 @@ import java.util.logging.Logger;
  */
 public class FileNumberingFilterWriter extends FilterWriter {
 
+  private int counter = 1;
+  private boolean newline = true;
+  private boolean previousCharWasSlashR = false;
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
 
   public FileNumberingFilterWriter(Writer out) {
@@ -25,34 +27,52 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    if(str.isEmpty()) return;
-    int i = 0;
-    int j;
-    int counter = 1;
-    String number;
-    while((j = str.indexOf('\n', i)) != -1){
-      number = Integer.toString(counter);
-      super.write(number, 0 ,number.length());
-      super.write('\t');
-      ++counter;
-      super.write(str, i, j - i + 1);
-      i = j + 1;
+    if(str.length() < off + len) throw new IOException("out of range access to char[] buffer");
+    for(int i = off; i < off + len; ++i){
+      write(str.charAt(i));
     }
-    number = Integer.toString(counter);
+  }
+
+  private void writeNumbering() throws IOException {
+    String number = Integer.toString(counter);
     super.write(number, 0, number.length());
+    ++counter;
     super.write('\t');
-    super.write(str, i, str.length() - i);
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    if(cbuf.length < off + len) throw new IOException("out of range access to char[] buffer");
+    for(int i = off; i < off + len; ++i){
+      write(cbuf[i]);
+    }
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    if(newline){
+      writeNumbering();
+      newline = false;
+    }
+
+    if(c == '\r'){
+      super.write(c);
+      previousCharWasSlashR = true;
+      return;
+    }
+
+    if(c == '\n'){
+      super.write(c);
+      writeNumbering();
+      previousCharWasSlashR = false;
+    } else {
+      if(previousCharWasSlashR){
+        writeNumbering();
+        previousCharWasSlashR = false;
+      }
+      super.write(c);
+    }
+
   }
 
 }
